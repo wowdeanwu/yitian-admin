@@ -1,22 +1,29 @@
 'use strict';
 
 var _ = require('lodash');
+var moment = require('moment');
+var mysql = require('mysql');
 
-var mysql      = require('mysql');
+var mysqlConfig = require('../../config/environment');
 
-var mysqlPool = mysql.createPool({
-  host     : '****',
-  port     :  3306,
-  database : '****',
-  user     : '****',
-  password : '****',
-});
+var mysqlPool = mysql.createPool(mysqlConfig.mysql);
 
 exports.list = function(req, res) {
+  var query = req.query;
+  var sql = 'SELECT * FROM config WHERE 1 ';
+  var values = [];
 
+  if(!_.isEmpty(query.module)){
+    sql += ' AND MODULE like ? ';
+    values.push('%' + query.module + '%')
+  }
+  
   mysqlPool.getConnection(
     function(err,connection){
-        connection.query('SELECT * FROM config', function(err, rows, fields) {
+        connection.query({
+          sql:sql,
+          values:values
+        }, function(err, rows, fields) {
           if (err) throw err;
           res.json(rows);
           connection.release();
@@ -39,13 +46,12 @@ exports.detail = function(req, res) {
 };
 
 exports.create = function(req, res) {
-   var data = {
-     config_id : 'qqqqqq',
-     module:'DEFAULT',
-     config_key:'test',
-     config_value:'testtest',
-     created_date: new Date()
-   };
+  
+  var data = req.body;
+  data.config_id = 'CONFIG' + moment().format("YYYYMMDD") + _.random(1000,9999);
+  data.created_date = new Date();
+  data.type = 0;
+  data.status = 1;
 
   mysqlPool.getConnection(
     function(err,connection){

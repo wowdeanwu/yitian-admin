@@ -24,24 +24,21 @@ var all = {
   // Server IP
   ip: process.env.IP || '0.0.0.0',
 
-  // Should we populate the DB with sample data?
-  seedDB: false,
-
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
-    session: 'ytc-system-secret'
+    session: 'yitian-admin-secret'
   },
 
   // List of user roles
   userRoles: ['guest', 'user', 'admin'],
 
-  // MongoDB connection options
-  mongo: {
-    options: {
-      db: {
-        safe: true
-      }
-    }
+  // Mysql  DB connection options
+  mysql: {
+    host     : '****',
+    port     :  3306,
+    database : '****',
+    user     : '****',
+    password : '****',
   },
 
 };
