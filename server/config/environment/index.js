@@ -40,7 +40,12 @@ var all = {
     user     : '****',
     password : '****',
   },
-
+  redis:{
+    host  : '****',
+    port  : 6379,
+    password: '****',
+    db    : 0
+  }
 };
 
 // Export the config object based on the NODE_ENV
