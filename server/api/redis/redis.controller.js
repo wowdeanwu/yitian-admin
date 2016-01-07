@@ -50,7 +50,7 @@ exports.detail = function(req, res) {
         if(!_.isEmpty(obj))
             res.json({
                 key:key,
-                value:obj
+                value:JSON.stringify(obj)
             });
     });
 };
@@ -74,6 +74,6 @@ exports.delete = function(req, res) {
                 result:result
             });
         }
-        
+
     });
 };

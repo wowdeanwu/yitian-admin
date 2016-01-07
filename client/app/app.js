@@ -7,7 +7,7 @@ angular.module('yitianAdminApp', [
         var nga = NgAdminConfigurationProvider;
         // create an admin application
         var admin = nga.application('我是Dome').baseApiUrl('http://localhost:9000/api/');
-        
+
         /*************************** 配置项 ***************************/
         var configs = nga.entity('configs').identifier(nga.field('CONFIG_ID'));
         //显示Config List
@@ -43,7 +43,10 @@ angular.module('yitianAdminApp', [
             nga.field('key').isDetailLink(true)
         ]).exportFields([])
         .listActions(['show','delete']);
-        redis.deletionView();
+        redis.showView().fields([
+			nga.field('key'),
+			nga.field('value')
+		]);
 
         admin.addEntity(configs);
         admin.addEntity(redis);
