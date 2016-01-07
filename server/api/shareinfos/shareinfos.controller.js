@@ -10,13 +10,8 @@ var mysqlPool = mysql.createPool(mysqlConfig.mysql);
 
 exports.list = function(req, res) {
   var query = req.query;
-  var sql = 'SELECT * FROM config WHERE 1 ';
+  var sql = 'SELECT * FROM t_share_info WHERE 1 ';
   var values = [];
-
-  if (!_.isEmpty(query.module)) {
-    sql += ' AND MODULE like ? ';
-    values.push('%' + query.module + '%')
-  }
 
   mysqlPool.getConnection(
     function(err, connection) {
@@ -36,7 +31,7 @@ exports.detail = function(req, res) {
 
   mysqlPool.getConnection(
     function(err, connection) {
-      connection.query('SELECT * FROM config WHERE config_id=?', req.params.id, function(err, result) {
+      connection.query('SELECT * FROM t_share_info WHERE share_info_id=?', req.params.id, function(err, result) {
         if (err) throw err;
         res.json(result[0]);
         connection.release();
@@ -48,14 +43,13 @@ exports.detail = function(req, res) {
 exports.create = function(req, res) {
 
   var data = req.body;
-  data.config_id = 'CONFIG' + moment().format("YYYYMMDD") + _.random(1000, 9999);
+  data.share_info_id = 'SFI' + moment().format("YYYYMMDD") + _.random(1000, 9999);
   data.created_date = new Date();
-  data.type = 0;
-  data.status = 1;
+  data.share_way = 0;
 
   mysqlPool.getConnection(
     function(err, connection) {
-      connection.query('INSERT INTO config SET ?', data, function(err, result) {
+      connection.query('INSERT INTO t_share_info SET ?', data, function(err, result) {
         if (err) throw err;
         res.json(data);
         connection.release();
@@ -66,33 +60,35 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   var data = req.body;
 
-  var sql = 'UPDATE config SET ';
+  var sql = 'UPDATE t_share_info SET ';
   var values = [];
-  if (data.MODULE) {
-    sql += ' MODULE=?,';
-    values.push(data.MODULE);
-  }
-  if (data.CONFIG_KEY) {
-    sql += ' CONFIG_KEY=?,';
-    values.push(data.CONFIG_KEY);
-  }
-  if (data.CONFIG_VALUE) {
-    sql += ' CONFIG_VALUE=?,';
-    values.push(data.CONFIG_VALUE);
-  }
-  if (data.NAME) {
-    sql += ' NAME=?,';
-    values.push(data.NAME);
+  if (data.TITLE) {
+    sql += ' TITLE=?,';
+    values.push(data.TITLE);
   }
   if (data.DESCRIPTION) {
     sql += ' DESCRIPTION=?,';
     values.push(data.DESCRIPTION);
   }
+  if (data.IMG_URL) {
+    sql += ' IMG_URL=?,';
+    values.push(data.IMG_URL);
+  }
+  if (data.LINK) {
+    sql += ' LINK=?,';
+    values.push(data.LINK);
+  }
+  if (data.BUSINESS_TYPE) {
+    sql += ' BUSINESS_TYPE=?,';
+    values.push(data.BUSINESS_TYPE);
+  }
+   if (data.COMMENT) {
+    sql += ' COMMENT=?,';
+    values.push(data.COMMENT);
+  }
   sql = _.trimRight(sql, ',');
-  sql += ' WHERE CONFIG_ID=?';
+  sql += ' WHERE SHARE_INFO_ID=?';
   values.push(req.params.id);
-  console.log(sql);
-  console.log(values);
   mysqlPool.getConnection(
     function(err, connection) {
       connection.query({

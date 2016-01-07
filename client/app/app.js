@@ -48,8 +48,47 @@ angular.module('yitianAdminApp', [
 			nga.field('value')
 		]);
 
+        /*************************** 分享信息 ***************************/
+        var shareinfos = nga.entity('shareinfos').identifier(nga.field('SHARE_INFO_ID'));
+        //显示分享信息
+        shareinfos.listView().fields([
+            nga.field('TITLE'),
+            nga.field('DESCRIPTION'),
+            nga.field('IMG_URL'),
+            nga.field('LINK').map(function truncate(value) {
+                if (!value) {
+                    return '';
+                }
+                return value.length > 50 ? value.substr(0, 50) + '...' : value;
+            })
+            .cssClasses('hidden-xs'),
+            nga.field('BUSINESS_TYPE').label('B_TYPE'),
+            nga.field('STATUS'),
+            nga.field('COMMENT')
+        ]).exportFields([]).listActions(['edit']);;
+
+        //添加分享信息
+        shareinfos.creationView().fields([
+            nga.field('TITLE') .validation({required:true}),
+            nga.field('DESCRIPTION') .validation({required:true}),
+            nga.field('IMG_URL') .validation({required:true}),
+            nga.field('LINK') .validation({required:true}),
+            nga.field('BUSINESS_TYPE') .validation({required:true}),
+            nga.field('STATUS') .validation({required:true}),
+            nga.field('COMMENT')
+        ]);
+        //添加更新分享信息
+        shareinfos.editionView().fields(shareinfos.creationView().fields());
+
         admin.addEntity(configs);
         admin.addEntity(redis);
+        admin.addEntity(shareinfos);
+
+        admin.menu(nga.menu()
+          .addChild(nga.menu(configs).title('配置项'))
+          .addChild(nga.menu(redis))
+          .addChild(nga.menu(shareinfos).title('分享信息'))
+        );
         //admin.dashboard(nga.dashboard().addCollection(nga.collection()));
         // attach the admin application to the DOM and run it
         nga.configure(admin);
