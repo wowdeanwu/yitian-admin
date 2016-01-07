@@ -8,6 +8,7 @@ angular.module('yitianAdminApp', [
         // create an admin application
         var admin = nga.application('我是Dome').baseApiUrl('http://localhost:9000/api/');
         
+        /*************************** 配置项 ***************************/
         var configs = nga.entity('configs').identifier(nga.field('CONFIG_ID'));
         //显示Config List
         configs.listView().fields([
@@ -20,7 +21,7 @@ angular.module('yitianAdminApp', [
                 .pinned(true)
                 .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>'),
         ]).exportFields([]);
-        
+
         //添加创建配置项
         configs.creationView().fields([
         	nga.field('MODULE')
@@ -35,7 +36,18 @@ angular.module('yitianAdminApp', [
         //添加更新配置项
         configs.editionView().fields(configs.creationView().fields());
 
+        /*************************** Redis ***************************/
+        var redis = nga.entity('redis').identifier(nga.field('key'));
+        //显示redis List
+        redis.listView().fields([
+            nga.field('key').isDetailLink(true)
+        ]).exportFields([])
+        .listActions(['show','delete']);
+        redis.deletionView();
+
         admin.addEntity(configs);
+        admin.addEntity(redis);
+        //admin.dashboard(nga.dashboard().addCollection(nga.collection()));
         // attach the admin application to the DOM and run it
         nga.configure(admin);
     }])
